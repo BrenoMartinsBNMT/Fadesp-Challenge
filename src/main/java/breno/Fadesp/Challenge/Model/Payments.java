@@ -1,5 +1,7 @@
 package breno.Fadesp.Challenge.Model;
 
+import breno.Fadesp.Challenge.DTO.FilterDTO;
+import breno.Fadesp.Challenge.DTO.PaymentDTO;
 import breno.Fadesp.Challenge.Utils.EnumPaymentMethods;
 import breno.Fadesp.Challenge.Utils.EnumPaymentStatus;
 import jakarta.persistence.*;
@@ -13,7 +15,7 @@ public class Payments {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	UUID id;
 	@Column(name = "Codigo_debito",nullable = false,updatable = false)
-	int debitCode;
+	String debitCode;
 	@Column(name = "cpf_cnpj",nullable = false,updatable = false,length = 18)
 	String cpfCnpj;
 	@Enumerated(EnumType.STRING)
@@ -26,6 +28,18 @@ public class Payments {
 	@Enumerated(EnumType.STRING)
 	EnumPaymentStatus status ;
 	
+	public Payments( PaymentDTO paymentDTO ) {
+		this.debitCode = paymentDTO.getDebitCode();
+		this.cpfCnpj = paymentDTO.getCpfCnpj();
+		this.paymentMethods = paymentDTO.getPaymentMethods();
+		this.cardNumber = paymentDTO.getCardNumber().orElse("");
+		this.paymentValue = paymentDTO.getPaymentValue();
+	}
+	
+	public Payments() {
+	
+	}
+	
 	public UUID getId() {
 		return id;
 	}
@@ -34,11 +48,11 @@ public class Payments {
 		this.id = id;
 	}
 	
-	public int getDebitCode() {
+	public String getDebitCode() {
 		return debitCode;
 	}
 	
-	public void setDebitCode( int debitCode ) {
+	public void setDebitCode( String debitCode ) {
 		this.debitCode = debitCode;
 	}
 	
@@ -81,4 +95,6 @@ public class Payments {
 	public void setStatus( EnumPaymentStatus status ) {
 		this.status = status;
 	}
+	
+	
 }

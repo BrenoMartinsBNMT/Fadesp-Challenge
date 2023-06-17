@@ -14,7 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid( MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ErrorModel error = new ErrorModel(HttpStatus.BAD_REQUEST, "Validation Error", ex.getAllErrors().toString());
-		return new ResponseEntity<>(error.getDetails(), HttpStatus.BAD_REQUEST);
+		
+		return new ResponseEntity<>(error.getDetails().toString(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(EntityNotFoundException.class)

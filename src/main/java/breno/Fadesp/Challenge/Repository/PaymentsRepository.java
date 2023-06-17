@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Repository
 public interface PaymentsRepository extends JpaRepository<Payments, UUID> {
-	List<Payments> findByDebitCode(int debitCode);
+	List<Payments> findByDebitCode(String debitCode);
 	List<Payments> findAllByStatus( EnumPaymentStatus paymentStatus );
 	List<Payments> findAllByCpfCnpj(String cpfCnpj);
 	

@@ -9,8 +9,7 @@ import java.util.Optional;
 
 public class PaymentDTO {
 	@NotNull(message = "o campo não pode ser nulo (código de débito)")
-	@Min(value = 1, message = "valor não pode ser inferior a 1")
-	private int codigoDebito;
+	private String debitCode;
 	
 	@NotNull(message = "o campo não pode ser nulo (CPF ou CNPJ)")
 	@NotBlank(message = "o campo não pode ser vazio (CPF ou CNPJ)")
@@ -20,73 +19,69 @@ public class PaymentDTO {
 	@NotNull(message = "o campo não pode ser nulo (Metodos de pagamento)")
 	private EnumPaymentMethods paymentMethods;
 	
-	@Pattern(regexp = "[0-9]*")
-	@Size(max = 19)
-	private Optional<String> numeroCartao;
+	private Optional<String> cardNumber;
 	
 	@NotNull(message = "o campo não pode ser nulo (valor do pagamento)")
 	@Positive(message = "valor mínimo para pagamento é R$1")
-	private Double valorPagamento;
+	private Double paymentValue;
 	
 	private EnumPaymentStatus status;
 	
-	public PaymentDTO( int codigoDebito, String CpfCnpj, EnumPaymentMethods metodosDePagamentos,
-	                   Optional<String> numeroCartao, Double valorPagamento, EnumPaymentStatus status) {
-		this.codigoDebito = codigoDebito;
+	public PaymentDTO( String debitCode, String CpfCnpj, EnumPaymentMethods paymentMethods,
+	                   Optional<String> cardNumber, Double paymentValue, EnumPaymentStatus status) {
+		this.debitCode = debitCode;
 		this.CpfCnpj = CpfCnpj;
-		this.paymentMethods = metodosDePagamentos;
-		this.numeroCartao = numeroCartao;
-		this.valorPagamento = valorPagamento;
+		this.paymentMethods = paymentMethods;
+		this.cardNumber = cardNumber;
+		this.paymentValue = paymentValue;
 		this.status = status;
 	}
 	
-	// Getters and Setters
-	
-	public int getCodigoDebito() {
-		return codigoDebito;
+	public String getDebitCode() {
+		return debitCode;
 	}
 	
-	public void setCodigoDebito(int codigoDebito) {
-		this.codigoDebito = codigoDebito;
+	public void setDebitCode( String debitCode ) {
+		this.debitCode = debitCode;
 	}
 	
 	public String getCpfCnpj() {
 		return CpfCnpj;
 	}
 	
-	public void setCpfCnpj(String CpfCnpj) {
-		this.CpfCnpj = CpfCnpj;
+	public void setCpfCnpj( String cpfCnpj ) {
+		CpfCnpj = cpfCnpj;
 	}
 	
-	public EnumPaymentMethods getMetodosDePagamentos() {
+	public EnumPaymentMethods getPaymentMethods() {
 		return paymentMethods;
 	}
 	
-	public void setMetodosDePagamentos(EnumPaymentMethods metodosDePagamentos) {
-		this.paymentMethods = metodosDePagamentos;
+	public void setPaymentMethods( EnumPaymentMethods paymentMethods ) {
+		this.paymentMethods = paymentMethods;
 	}
 	
-	public Optional<String> getNumeroCartao() {
-		return numeroCartao;
+	public Optional<String> getCardNumber() {
+		return cardNumber;
 	}
 	
-	public void setNumeroCartao(Optional<String> numeroCartao) {
-		this.numeroCartao = numeroCartao;
+	public void setCardNumber( Optional<String> cardNumber ) {
+		this.cardNumber = cardNumber;
 	}
 	
-	public Double getValorPagamento() {
-		return valorPagamento;
+	public Double getPaymentValue() {
+		return paymentValue;
 	}
 	
-	public void setValorPagamento(Double valorPagamento) {
-		this.valorPagamento = valorPagamento;
+	public void setPaymentValue( Double paymentValue ) {
+		this.paymentValue = paymentValue;
 	}
 	
 	public EnumPaymentStatus getStatus() {
 		return status;
 	}
 	
-	public void setStatus(EnumPaymentStatus status) {
+	public void setStatus( EnumPaymentStatus status ) {
 		this.status = status;
 	}
 }

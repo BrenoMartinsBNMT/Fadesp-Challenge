@@ -23,25 +23,26 @@ public class PaymentService {
 	
 	public ResponseEntity<?> salvarPagamentos( PaymentDTO pagamento){
 		Payments responseId;
-		Payments teste = new Payments();
-		
-		if(pagamento.getNumeroCartao().isEmpty()){
+		Payments teste = new Payments(pagamento);
+		System.out.println(teste.getPaymentMethods());
+		if(pagamento.getCardNumber().isEmpty()){
 			teste.setStatus(EnumPaymentStatus.processando);
 			
-			if ( pagamento.getMetodosDePagamentos().equals(EnumPaymentMethods.boleto) ||
-					     pagamento.getMetodosDePagamentos().equals(EnumPaymentMethods.pix) ){
+			if ( pagamento.getPaymentMethods().equals(EnumPaymentMethods.boleto) ||
+					     pagamento.getPaymentMethods().equals(EnumPaymentMethods.pix) ){
 				responseId = paymentsRepository.save(teste);
 				return new ResponseEntity<>(responseId.getId(), HttpStatus.CREATED);
 			}
 			
 			
 		}
-		if(pagamento.getNumeroCartao().isPresent()) {
-			if ( pagamento.getMetodosDePagamentos().equals(EnumPaymentMethods.cartao_credito) ||
-					     pagamento.getMetodosDePagamentos().equals(EnumPaymentMethods.cartao_debito) ) {
+		if(pagamento.getCardNumber().isPresent()) {
+			if ( pagamento.getPaymentMethods().equals(EnumPaymentMethods.cartao_credito) ||
+					     pagamento.getPaymentValue().equals(EnumPaymentMethods.cartao_debito) ) {
 				
-				responseId = paymentsRepository.save(new Payments());
-				return new ResponseEntity<>(responseId.getId(), HttpStatus.CREATED);
+				responseId = paymentsRepository.save(new Payments(pagamento));
+				
+				return new ResponseEntity<>("id: " + responseId.getId(), HttpStatus.CREATED);
 			}
 		}
 		return new ResponseEntity<>("Não foi possivel criar um pagamento", HttpStatus.FORBIDDEN);
@@ -50,9 +51,9 @@ public class PaymentService {
 	public ResponseEntity<?> atualizarStatusPagamento( StatusDTO statusPagamento ) {
 		UUID id = statusPagamento.getId();
 		EnumPaymentStatus status = statusPagamento.getStatusPagamento();
+		
 		try{
 			Optional<Payments> verificarStatus = paymentsRepository.findById(id);
-			
 			if(verificarStatus.get().getStatus().equals(status)){
 				return new ResponseEntity<>("não podemos concluir essa operação!",HttpStatus.FORBIDDEN);
 			}
@@ -67,6 +68,7 @@ public class PaymentService {
 			
 			return new ResponseEntity<>(paymentsRepository.updateStatus(status,id), HttpStatus.OK);
 		}catch ( Exception exception ){
+			
 			return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
 		}
 		
@@ -77,7 +79,7 @@ public class PaymentService {
 		
 		try{
 			if( filtro.getCodigoDebito() != null){
-				List<Payments> response = paymentsRepository.findByDebitCode(Integer.parseInt(filtro.getCodigoDebito().trim()));
+				List<Payments> response = paymentsRepository.findByDebitCode(filtro.getCodigoDebito().trim());
 				return new ResponseEntity<>(response,HttpStatus.OK);
 			}
 			

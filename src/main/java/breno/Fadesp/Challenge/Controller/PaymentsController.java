@@ -19,7 +19,7 @@ public class PaymentsController {
 	@Autowired
 	private PaymentService paymentService;
 	@PostMapping("")
-	public ResponseEntity<?> receberPagamento  ( @Valid @RequestBody PaymentDTO body){
+	public ResponseEntity<?> receberPagamento  (@Valid  @RequestBody PaymentDTO body){
 		
 		try{
 			return new ResponseEntity<>(paymentService.salvarPagamentos(body), HttpStatus.CREATED);
@@ -37,9 +37,8 @@ public class PaymentsController {
 		}
 	}
 	@GetMapping("")
-	public ResponseEntity<?> listarPagamentos(  FilterDTO filtro ){
+	public ResponseEntity<?> listarPagamentos(FilterDTO filtro ){
 		try {
-			System.out.println(filtro.getClass().getName());
 			return new ResponseEntity<>(paymentService.listarPagamentos(filtro), HttpStatus.OK);
 		}catch ( Exception exception ) {
 			return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
@@ -47,7 +46,6 @@ public class PaymentsController {
 	}
 	@DeleteMapping("")
 	public ResponseEntity<?> excluirPagamentos(@Param("idPagamento") String idPagamento ){
-		System.out.println(idPagamento);
 		try {
 			UUID id = UUID.fromString(idPagamento);
 			return paymentService.exclusaoPagamento(id);
