@@ -1,10 +1,11 @@
 package breno.Fadesp.Challenge.Model;
 
-import breno.Fadesp.Challenge.DTO.FilterDTO;
+
 import breno.Fadesp.Challenge.DTO.PaymentDTO;
 import breno.Fadesp.Challenge.Utils.EnumPaymentMethods;
 import breno.Fadesp.Challenge.Utils.EnumPaymentStatus;
 import jakarta.persistence.*;
+import org.hibernate.validator.constraints.CreditCardNumber;
 
 import java.util.UUID;
 
@@ -21,10 +22,11 @@ public class Payments {
 	@Enumerated(EnumType.STRING)
 	EnumPaymentMethods paymentMethods;
 	@Column(name = "numero_cartao",updatable = false,length = 16)
-	String cardNumber;
+	@CreditCardNumber
+	String cardNumber = null;
 	@Column(name = "valor_pagamento",nullable = false,updatable = false)
 	Double paymentValue;
-	@Column(name = "status")
+	@Column(name = "status",nullable = false)
 	@Enumerated(EnumType.STRING)
 	EnumPaymentStatus status ;
 	

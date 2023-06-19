@@ -6,13 +6,13 @@ import java.util.Optional;
 
 public class FilterDTO {
 	private Optional<String> CpfCnpj;
-	private String codigoDebito;
-	private Optional<EnumPaymentStatus> statusPagamento;
+	private Optional<String> debitCode;
+	private Optional<EnumPaymentStatus> paymentStatus;
 	
-	public FilterDTO( Optional<String> CpfCnpj, String codigoDebito, Optional<EnumPaymentStatus> statusPagamento) {
+	public FilterDTO( Optional<String> CpfCnpj, Optional<String> debitCode, Optional<EnumPaymentStatus> paymentStatus) {
 		this.CpfCnpj = CpfCnpj;
-		this.codigoDebito = codigoDebito;
-		this.statusPagamento = statusPagamento;
+		this.debitCode = debitCode;
+		this.paymentStatus = paymentStatus;
 	}
 	
 	// Getters
@@ -21,11 +21,11 @@ public class FilterDTO {
 		return CpfCnpj;
 	}
 	
-	public String getCodigoDebito() {
-		return codigoDebito;
+	public Optional<String> getCodigoDebito() {
+		return debitCode;
 	}
 	
 	public Optional<EnumPaymentStatus> getStatusPagamento() {
-		return statusPagamento;
+		return paymentStatus;
 	}
 }

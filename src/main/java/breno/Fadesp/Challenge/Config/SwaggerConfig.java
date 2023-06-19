@@ -1,6 +1,5 @@
 package breno.Fadesp.Challenge.Config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,9 +17,9 @@ public class SwaggerConfig {
 	
 	@Bean
 	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
+		return new Docket(DocumentationType.SWAGGER_2).pathMapping("breno")
 				       .select()
-				       .apis(RequestHandlerSelectors.any()) // Update with your controller package
+				       .apis(RequestHandlerSelectors.basePackage("breno/Fadesp/Challenge/Controller/PaymentsController.java")) // Update with your controller package
 				       .paths( PathSelectors.any())
 				       .build()
 				       .apiInfo(apiInfo());
@@ -28,7 +27,7 @@ public class SwaggerConfig {
 	
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				       .title("Your Application API")
+				       .title("Desafio API de pagamentos")
 				       .description("API documentation for Your Application")
 				       .version("1.0")
 				       .build();

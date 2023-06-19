@@ -21,47 +21,43 @@ public class PaymentService {
 	@Autowired
 	private PaymentsRepository paymentsRepository;
 	
-	public ResponseEntity<?> salvarPagamentos( PaymentDTO pagamento){
-		Payments responseId;
-		Payments teste = new Payments(pagamento);
-		System.out.println(teste.getPaymentMethods());
-		if(pagamento.getCardNumber().isEmpty()){
-			teste.setStatus(EnumPaymentStatus.processando);
-			
-			if ( pagamento.getPaymentMethods().equals(EnumPaymentMethods.boleto) ||
-					     pagamento.getPaymentMethods().equals(EnumPaymentMethods.pix) ){
-				responseId = paymentsRepository.save(teste);
-				return new ResponseEntity<>(responseId.getId(), HttpStatus.CREATED);
-			}
-			
-			
-		}
-		if(pagamento.getCardNumber().isPresent()) {
-			if ( pagamento.getPaymentMethods().equals(EnumPaymentMethods.cartao_credito) ||
-					     pagamento.getPaymentValue().equals(EnumPaymentMethods.cartao_debito) ) {
-				
-				responseId = paymentsRepository.save(new Payments(pagamento));
-				
-				return new ResponseEntity<>("id: " + responseId.getId(), HttpStatus.CREATED);
-			}
-		}
-		return new ResponseEntity<>("Não foi possivel criar um pagamento", HttpStatus.FORBIDDEN);
-	}
-	
-	public ResponseEntity<?> atualizarStatusPagamento( StatusDTO statusPagamento ) {
-		UUID id = statusPagamento.getId();
-		EnumPaymentStatus status = statusPagamento.getStatusPagamento();
+	public ResponseEntity<?> savePayment( PaymentDTO payment){
 		
 		try{
-			Optional<Payments> verificarStatus = paymentsRepository.findById(id);
-			if(verificarStatus.get().getStatus().equals(status)){
+			Payments responseId;
+			Payments paymentBody = new Payments(payment);
+				if ( payment.getPaymentMethods().equals(EnumPaymentMethods.boleto) ||
+						     payment.getPaymentMethods().equals(EnumPaymentMethods.pix) ) {
+					paymentBody.setStatus(EnumPaymentStatus.processando);
+					paymentBody.setCardNumber(null);
+					responseId = paymentsRepository.save(paymentBody);
+					return new ResponseEntity<>("id: " + responseId.getId(), HttpStatus.CREATED);
+				}
+			
+			paymentBody.setStatus(EnumPaymentStatus.processando);
+			responseId = paymentsRepository.save(paymentBody);
+			
+			return new ResponseEntity<>("id: " + responseId.getId(), HttpStatus.CREATED);
+		}catch ( Exception exception ){
+			return new ResponseEntity<>("Não foi possivel criar um pagamento"   , HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		
+	}
+	
+	public ResponseEntity<?> updateStatusPayment( StatusDTO paymentStatus ) {
+		UUID id = paymentStatus.getId();
+		EnumPaymentStatus status = paymentStatus.getStatusPagamento();
+		
+		try{
+			Optional<Payments> verifyStatus = paymentsRepository.findById(id);
+			if(verifyStatus.get().getStatus().equals(status)){
 				return new ResponseEntity<>("não podemos concluir essa operação!",HttpStatus.FORBIDDEN);
 			}
-			if ( verificarStatus.get().getStatus().equals(EnumPaymentStatus.sucesso)){
+			if ( verifyStatus.get().getStatus().equals(EnumPaymentStatus.sucesso)){
 				return new ResponseEntity<>("Não podemos alterar o status dessa operação!",HttpStatus.FORBIDDEN);
 			}
-			if ( verificarStatus.get().getStatus().equals(EnumPaymentStatus.falha)) {
-				if(!status.equals(EnumPaymentStatus.processando)){
+			if ( verifyStatus.get().getStatus().equals(EnumPaymentStatus.falha)) {
+				if(status.equals(EnumPaymentStatus.sucesso)){
 					return new ResponseEntity<>("Não podemos realizar essa operação!",HttpStatus.FORBIDDEN);
 				}
 			}
@@ -75,36 +71,38 @@ public class PaymentService {
 		
 	}
 	
-	public ResponseEntity<?> listarPagamentos ( FilterDTO filtro){
+	public ResponseEntity<?> paymentList ( FilterDTO filter){
 		
 		try{
-			if( filtro.getCodigoDebito() != null){
-				List<Payments> response = paymentsRepository.findByDebitCode(filtro.getCodigoDebito().trim());
+			if( filter.getCodigoDebito().isPresent()){
+				List<Payments> response = paymentsRepository.findByDebitCode(filter.getCodigoDebito().get());
 				return new ResponseEntity<>(response,HttpStatus.OK);
 			}
 			
-			if ( filtro.getCpfCnpj().isPresent() ){
-				List<Payments> response =  paymentsRepository.findAllByCpfCnpj(filtro.getCpfCnpj().get());
+			if ( filter.getCpfCnpj().isPresent() ){
+				List<Payments> response =  paymentsRepository.findAllByCpfCnpj(filter.getCpfCnpj().get());
 				
 				return new ResponseEntity<>(response,HttpStatus.OK);
 			}
-			if(filtro.getStatusPagamento().isPresent()){
-				List<Payments> response = paymentsRepository.findAllByStatus(filtro.getStatusPagamento().get());
+			if(filter.getStatusPagamento().isPresent()){
+				List<Payments> response = paymentsRepository.findAllByStatus(filter.getStatusPagamento().get());
 				return new ResponseEntity<>(response,HttpStatus.OK);
 			}
-			return new ResponseEntity<>(paymentsRepository.findAll(),HttpStatus.OK);
+			
+				return new ResponseEntity<>("Nemhum pagamento encontrado!",HttpStatus.NOT_FOUND);
+			
 		}catch ( Exception exception ){
-			return new ResponseEntity<>(exception.getMessage(),HttpStatus.OK);
+			return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST);
 		}
 		
 	}
 	
-	public ResponseEntity<?> exclusaoPagamento(UUID idPagamento){
+	public ResponseEntity<?> paymentDelete(UUID paymentId){
 		try{
 			
-			Optional<Payments> processandoPagamento = paymentsRepository.findById(idPagamento);
-			if(processandoPagamento.get().getStatus() == EnumPaymentStatus.processando){
-				paymentsRepository.deleteById(idPagamento);
+			Optional<Payments> responsePaymentStatus = paymentsRepository.findById(paymentId);
+			if(responsePaymentStatus.get().getStatus() == EnumPaymentStatus.processando){
+				paymentsRepository.deleteById(paymentId);
 				return new ResponseEntity<>("Ação concluida com sucesso!",HttpStatus.OK);
 			}
 			return new ResponseEntity<>("Não foi possivel concluir essa operação",HttpStatus.OK);

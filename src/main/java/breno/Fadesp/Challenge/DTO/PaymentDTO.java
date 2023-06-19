@@ -1,7 +1,6 @@
 package breno.Fadesp.Challenge.DTO;
 
 import breno.Fadesp.Challenge.Utils.EnumPaymentMethods;
-import breno.Fadesp.Challenge.Utils.EnumPaymentStatus;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,16 +24,16 @@ public class PaymentDTO {
 	@Positive(message = "valor mínimo para pagamento é R$1")
 	private Double paymentValue;
 	
-	private EnumPaymentStatus status;
+	
 	
 	public PaymentDTO( String debitCode, String CpfCnpj, EnumPaymentMethods paymentMethods,
-	                   Optional<String> cardNumber, Double paymentValue, EnumPaymentStatus status) {
+	                   Optional<String> cardNumber, Double paymentValue) {
 		this.debitCode = debitCode;
 		this.CpfCnpj = CpfCnpj;
 		this.paymentMethods = paymentMethods;
 		this.cardNumber = cardNumber;
 		this.paymentValue = paymentValue;
-		this.status = status;
+	
 	}
 	
 	public String getDebitCode() {
@@ -77,11 +76,5 @@ public class PaymentDTO {
 		this.paymentValue = paymentValue;
 	}
 	
-	public EnumPaymentStatus getStatus() {
-		return status;
-	}
-	
-	public void setStatus( EnumPaymentStatus status ) {
-		this.status = status;
-	}
+
 }
