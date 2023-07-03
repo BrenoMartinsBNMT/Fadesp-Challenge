@@ -1,4 +1,4 @@
-package breno.Fadesp.Challenge.Config;
+package breno.Fadesp.Challenge.SwaggerConfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
